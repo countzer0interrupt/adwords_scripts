@@ -13,7 +13,7 @@ var PROCTOR_URL = 'https://docs.google.com/spreadsheets/d/1XOb97fsBYpur7HK-uBRjT
 var HNK_URL = 'https://docs.google.com/spreadsheets/d/1me38UAygYH8MkBquP5P0GTvbRu_SDTw57W5h1KGRXPU/';
 var MICROSOFT_URL = 'https://docs.google.com/spreadsheets/d/1n-532C46tzmA2HV8mv9tKnK3ThwiNr4-dgMkB3mOEdY/';
 var MONDELEZ_URL = 'https://docs.google.com/spreadsheets/d/1f6Vo85oN-y5KLDARRY2IdYSxksy8dBOn4e06U1qvUD0/';
-var BMW_URL = 'https://docs.google.com/spreadsheets/d/1WSee-2l6u7wcExICtZJK3Pkt007gQKBT2eCgUHLatlw/';
+var BMW_URL = 'https://docs.google.com/spreadsheets/d/1CEB12JD2qA84XW1MWPA5IWxPPcmPNKGBHpMcrYimidU/';
 var LVMH_URL = 'https://docs.google.com/spreadsheets/d/1Nre4eDBN-dXOZylCLcaOEx_FtP9wg8KphO0UXDiipfo/';
 var LOREAL_URL = 'https://docs.google.com/spreadsheets/d/1VHRikdWYSinreyZlnm31c7AfOiFuGVLphheV2z_XNMo/';
 var LEGO_URL = 'https://docs.google.com/spreadsheets/d/1Bec3n97XfJFcLNGzySNW4ilnwVQzW1Md0mERZtReO9Q/';
@@ -30,7 +30,7 @@ var location;
 function main() {
 
   // STEP ONE - SELECT YOUR CLIENT URL HERE: It is important you select your client here (eg. "COKE_URL, or DIAGEO_URL")
-  var URL = # INPUT HERE CLIENT URL #
+  var URL = # SELECT YOUR CLIENT URL ABOVE #
   
   // STEP TWO - BY DEFAULT THIS SCRIPT ASSUMES YOU ARE RUNNING AT MCC LEVEL, IF IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
   LEVEL = "Account"
