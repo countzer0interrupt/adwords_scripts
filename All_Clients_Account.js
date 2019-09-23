@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// BRAND SUITABILITY KPI SCRIPT v1.0
+// BRAND SUITABILITY KPI SCRIPT v1.1
 // Instructions
 // Please look at the main() function, and verify that the URL variable is set to your client (STEP ONE)
 // If you are running the script at MCC level, ensure that 'LEVEL = "Account"' is commented out with two forward slashes, or is deleted.
@@ -30,7 +30,7 @@ var location;
 function main() {
 
   // STEP ONE - SELECT YOUR CLIENT URL HERE: It is important you select your client here (eg. "COKE_URL, or DIAGEO_URL")
-  var URL = #CHOOSE THE RIGHT CLIENT FROM ABOVE#
+  var URL = # INPUT HERE CLIENT URL #
   
   // STEP TWO - BY DEFAULT THIS SCRIPT ASSUMES YOU ARE RUNNING AT MCC LEVEL, IF IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
   LEVEL = "Account"
@@ -80,7 +80,7 @@ function run(url, current) {
     var miscArr = findMisc(ss);
       excl_array = findTopicByNameArray(excludedTopicsArr); // need to find a way to get exclusions
       addExcludedTopicsToCampaign(campaign, excl_array); // if we do at camp level, consider ad group level
-      excl_array = findExcludedContentLabelByNameArray(contentTypesArr);
+      excl_array = findExcludedContentLabelByNameArray(contentTypesArr, campaign);
       addExcludedContentLabelsToCampaign(campaign, excl_array); // if we do at camp level, consider ad group level
       checkKeywordExclusions(campaign);
       checkVideoChannelExclusions(campaign);
@@ -103,12 +103,21 @@ for(k=0; k<arr.length; k++) {
   return retVal;
 }
 
-function findExcludedContentLabelByNameArray(arr) {
+function findExcludedContentLabelByNameArray(arr, campaign) {
   retVal = [];
-  ss = openSpreadSheet(CONTENTTYPE_URL)
+  var campaignType = campaign.getEntityType();
+  var offset = 0;
 
+  if(campaignType == "Campaign") {
+  targeting = campaign.display();
+} else if (campaignType == "VideoCampaign") {
+  targeting = campaign.videoTargeting();
+  offset = 2;
+}
+  ss = openSpreadSheet(CONTENTTYPE_URL)
+Logger.log("-0---0-----: " + offset);
 for(k=0; k<arr.length; k++) {
-  val = vlookup(ss.getActiveSheet(), 1, 1, arr[k][0]);
+  val = vlookup(ss.getActiveSheet(), 1+offset, 1, arr[k][0]);
   if(val!==null && typeof val !== 'undefined') { retVal.push(val); } //wtf is the === negation?
   else { Logger.log("Error: The topic " + arr[k][0] + " is not a valid setting / doesn't exist in the Topics list."); }
 }
@@ -136,8 +145,14 @@ for(i=0; i<excl_array.length;i++) {
 function addExcludedContentLabelsToCampaign(campaign, excl_array) {
   
 for(i=0; i<excl_array.length;i++) {
+        try {
         var topicBuilder = campaign.excludeContentLabel(excl_array[i]);
         Logger.log("Content Label Exclusion Added: " + excl_array[i]);
+        }
+        catch (e) {
+        Logger.log("Unspecified error with content label add: " + e);
+          
+        }
       }
 }
 
@@ -252,7 +267,9 @@ function findExcludedTopics(ss, index) {
 return findOptions(ss, "Topic Exclusions", index);
 }
 function findContentTypes(ss, index) {
-return findOptions(ss, "Content Types", index);
+a = findOptions(ss, "Content Types", index);
+b = findOptions(ss, "Sensitive Subjects", index);
+return a.concat(b)
 }
 function findContentLabels(ss, index) {
 return findOptions(ss, "Content Labels", index);
