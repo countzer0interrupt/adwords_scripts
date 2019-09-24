@@ -33,7 +33,7 @@ var log;
 function main() {
 
   // STEP ONE - SELECT YOUR CLIENT URL HERE: It is important you select your client here (eg. "COKE_URL, or DIAGEO_URL")
-  var URL = # INPUT CLIENT URL HERE #
+  var URL = #INPUT YOUR CLIENT HERE#
  
   log = openSpreadSheet(LOG_URL);
   // STEP TWO - BY DEFAULT THIS SCRIPT ASSUMES YOU ARE RUNNING AT MCC LEVEL, IF IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
@@ -132,7 +132,6 @@ function findExcludedContentLabelByNameArray(arr, campaign) {
   offset = 2;
 }
   ss = openSpreadSheet(CONTENTTYPE_URL)
-Logger.log("-0---0-----: " + offset);
 for(k=0; k<arr.length; k++) {
   val = vlookup(ss.getActiveSheet(), 1+offset, 1, arr[k][0]);
   if(val!==null && typeof val !== 'undefined') { retVal.push(val); } //wtf is the === negation?
@@ -153,9 +152,14 @@ var campaignType = campaign.getEntityType();
 }
   
 for(i=0; i<excl_array.length;i++) {
+        try {
         var topicBuilder = targeting.newTopicBuilder();
         var topic = topicBuilder.withTopicId(excl_array[i]).exclude();
         Logger.log("Exclusion Topic Added: " + excl_array[i]);
+        }
+        catch(e) {
+        Logger.log("Error adding topic to campaign. It may be that it does not accept Topic Exclusions.")
+        }
       }
 }
 
@@ -167,7 +171,7 @@ for(i=0; i<excl_array.length;i++) {
         Logger.log("Content Label Exclusion Added: " + excl_array[i]);
         }
         catch (e) {
-        Logger.log("Unspecified error with content label add: " + e);
+        Logger.log("Unspecified error with content label exclusion. It may be : " + e);
           
         }
       }
@@ -235,9 +239,14 @@ function checkSiteExclusions(campaign) {
 // verify that content types are the exposed via the display() interface
 function addContentTypesToDisplay(display, excl_array) {
 for(i=0; i<excl_array.length;i++) {
+        try {
         var topicBuilder = display.newTopicBuilder();
         var topic = topicBuilder.withTopicId(excl_array[i]).exclude();
         Logger.log("Exclusion Topic Added: " + topic.getResult());
+        } 
+        catch(e) {
+          Logger.log("Problem adding exclusion topic (content types). This campaign may not support these topics.");
+        }
       }
 }
 
@@ -335,7 +344,7 @@ function findOptions(ss, text, sheet_index) {
 }
 
 function rvlookup(sheet, column, index, value) {
-  var retVal; 
+  var retVal = "";
   var lastRow=sheet.getLastRow();
   var data=sheet.getRange(1,column,lastRow,column+index).getValues();
   
