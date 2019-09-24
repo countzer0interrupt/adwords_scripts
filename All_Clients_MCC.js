@@ -1,6 +1,8 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // BRAND SUITABILITY KPI SCRIPT v1.1
 // Instructions
+// If you have a time out (> 30 mins) then please re-run the script, it will skip over any campaigns remediated in the previous 3 days. If you 
+// re-run the script after this, it will continue to loop through all campaigns.
 // Please look at the main() function, and verify that the URL variable is set to your client (STEP ONE)
 // If you are running the script at MCC level, ensure that 'LEVEL = "Account"' is commented out with two forward slashes, or is deleted.
 // If you are running the script at Account level, ensure that 'LEVEL = Account' is present, otherwise the script will fail (STEP TWO)
@@ -26,12 +28,14 @@ var LOG_URL = 'https://docs.google.com/spreadsheets/d/1x7D-WjdSd4klm_eJzs4Y7eX_n
 // other constants, do not edit this
 var LEVEL = "MCC";
 var location;
+var log;
 
 function main() {
 
   // STEP ONE - SELECT YOUR CLIENT URL HERE: It is important you select your client here (eg. "COKE_URL, or DIAGEO_URL")
-  var URL = # SELECT YOUR CLIENT URL ABOVE #
-  
+  var URL = # INPUT CLIENT URL HERE #
+ 
+  log = openSpreadSheet(LOG_URL);
   // STEP TWO - BY DEFAULT THIS SCRIPT ASSUMES YOU ARE RUNNING AT MCC LEVEL, IF IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
   //LEVEL = "Account"
   
@@ -40,23 +44,30 @@ function main() {
   else {
     
     var accountIterator = AdsManagerApp.accounts().get();
+    
     while (accountIterator.hasNext()) {
       var account = accountIterator.next();
-    
+      
+      a_id = rvlookup(log.getSheets()[0], 1, 4, account.getCustomerId());
+      if(a_id!=="") {
+      if((a_id)==account.getCustomerId()) { continue; } else { a_id = ""; }}
+      
       // Select the client account.
-      current_account = AdsManagerApp.select(account);
-      run(URL, current_account);
+      AdsManagerApp.select(account);
+      run(URL, account);
+      appendRow(log, account.getCustomerId(), account.getCustomerId(), d.toString(), "ACCTCOMPLETED", account.getCustomerId());
     }
   }
 }
 
 function run(url, current) {
-  var log = openSpreadSheet(LOG_URL);
   var ss = openSpreadSheet(url); 
   // set up spreadsheets
   d = new Date();
+  c_id = rvlookup(log.getSheets()[0], 1, 4, current.getCustomerId());
   appendRow(log, current.getCustomerId(), current.getName(), d.toString(), "ATTEMPTED");
-
+  
+  
   // iterate through video + standard campaigns
   iterators = [AdsApp.videoCampaigns().get(), AdsApp.campaigns().get()];
 
@@ -65,8 +76,13 @@ function run(url, current) {
     iterator = iterators[t];
     while (iterator.hasNext()) {
     var campaign = iterator.next();
-    if(hasActiveAds(campaign)) {
+    Logger.log("New: " + campaign.getName());
+    if(c_id!=="") {
+    Logger.log((+c_id) + " vs " + campaign.getId());
+    if((+c_id)!==campaign.getId()) { continue; } else { c_id = ""; }}
     
+    if(hasActiveAds(campaign)) {
+      appendRow(log, current.getCustomerId(), current.getName(), d.toString(), "CAMPAIGNSTART", campaign.getId());
       var locations = campaign.targeting().targetedLocations().get();
       if(locations.totalNumEntities() > 1 || locations.totalNumEntities() == 0) { 
         Logger.Log("Please note that campaign " + campaign.getName() + " has " + locations.totalNumEntities() + " locations. This will be ineligible for the Brand Suitability KPI, which requires exactly 1.");
@@ -86,9 +102,10 @@ function run(url, current) {
       checkVideoChannelExclusions(campaign);
       checkSiteExclusions(campaign);
     }
+      appendRow(log, current.getCustomerId(), current.getName(), d.toString(), "CAMPAIGNCOMPLETE", campaign.getId());
   }
   }
-    appendRow(log, current.getCustomerId(), current.getName(), d.toString(), "COMPLETED");
+    
 }
 
 function findTopicByNameArray(arr) {
@@ -309,6 +326,21 @@ function findOptions(ss, text, sheet_index) {
   
   for(i=0;i<data.length;++i){
  
+    if (data[i][0]==value){
+      retVal = data[i][index];
+      break;
+    }
+  }
+    return retVal;
+}
+
+function rvlookup(sheet, column, index, value) {
+  var retVal; 
+  var lastRow=sheet.getLastRow();
+  var data=sheet.getRange(1,column,lastRow,column+index).getValues();
+  
+  for(i=data.length-1;i>=0;i--){
+    
     if (data[i][0]==value){
       retVal = data[i][index];
       break;
