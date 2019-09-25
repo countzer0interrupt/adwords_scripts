@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// BRAND SUITABILITY KPI SCRIPT v1.3
+// BRAND SUITABILITY KPI SCRIPT v1.3.1
 // Instructions
 // If you have a time out (> 30 mins) then please re-run the script, it will skip over any campaigns remediated in the previous 3 days. If you 
 // re-run the script after this, it will continue to loop through all campaigns.
@@ -37,7 +37,7 @@ function main() {
  
   log = openSpreadSheet(LOG_URL);
   // STEP TWO - BY DEFAULT THIS SCRIPT ASSUMES YOU ARE RUNNING AT MCC LEVEL, IF IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
-  // LEVEL = "Account"
+  //LEVEL = "Account"
   
 
   if(LEVEL=="Account") { run(URL, AdsApp.currentAccount() ); }
@@ -78,8 +78,7 @@ function run(url, current) {
     c_id = rvlookup(log.getSheets()[0], 1, 4, current.getCustomerId());
     
     if(String(c_id).length > 0) {
-      Logger.log(c_id + " vs " + campaign.getId());
-    if((+c_id)!==campaign.getId()) { Logger.log("Skipping"); continue; } else { c_id = ""; }}
+    if((+c_id)!==campaign.getId()) { continue; } else { c_id = ""; }}
     
     if(hasActiveAds(campaign)) {
       appendRow(log, current.getCustomerId(), current.getName(), d.toString(), "CAMPAIGNSTART", campaign.getId());
@@ -132,7 +131,7 @@ function findExcludedContentLabelByNameArray(arr, campaign) {
   offset = 2;
 }
   ss = openSpreadSheet(CONTENTTYPE_URL)
-Logger.log("-0---0-----: " + offset);
+
 for(k=0; k<arr.length; k++) {
   val = vlookup(ss.getActiveSheet(), 1+offset, 1, arr[k][0]);
   if(val!==null && typeof val !== 'undefined') { retVal.push(val); } //wtf is the === negation?
@@ -400,6 +399,6 @@ function appendRow(ss) {
   }
   // Appends a new row with 3 columns to the bottom of the
   // spreadsheet containing the values in the array.
-  Logger.log(arr);
+  
   sheet.appendRow(arr);
 }
