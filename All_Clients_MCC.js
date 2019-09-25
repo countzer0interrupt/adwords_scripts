@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// BRAND SUITABILITY KPI SCRIPT v1.3.1
+// BRAND SUITABILITY KPI SCRIPT v1.3.2
 // Instructions
 // If you have a time out (> 30 mins) then please re-run the script, it will skip over any campaigns remediated in the previous 3 days. If you 
 // re-run the script after this, it will continue to loop through all campaigns.
@@ -9,16 +9,17 @@
 // ----------------------------------------------------------------------------------------------------------------------------------------------
 
 // CLIENT URLs: Please do not edit these 
-var COKE_URL = 'https://docs.google.com/spreadsheets/d/1PjQ6-_pFhw166ja0KVc-yXSHnL8klAKnpLryrTFliaE/';
-var DIAGEO_URL = 'https://docs.google.com/spreadsheets/d/1_b7ymR2kA8EmWJlUlUs6Evpc9ykt3TxIyI_XYFEgrRk/';
-var PROCTOR_URL = 'https://docs.google.com/spreadsheets/d/1XOb97fsBYpur7HK-uBRjTkSYHGtQf3-EVNzG-hZTYTM/';
-var HNK_URL = 'https://docs.google.com/spreadsheets/d/1me38UAygYH8MkBquP5P0GTvbRu_SDTw57W5h1KGRXPU/';
-var MICROSOFT_URL = 'https://docs.google.com/spreadsheets/d/1n-532C46tzmA2HV8mv9tKnK3ThwiNr4-dgMkB3mOEdY/';
-var MONDELEZ_URL = 'https://docs.google.com/spreadsheets/d/1f6Vo85oN-y5KLDARRY2IdYSxksy8dBOn4e06U1qvUD0/';
-var BMW_URL = 'https://docs.google.com/spreadsheets/d/1CEB12JD2qA84XW1MWPA5IWxPPcmPNKGBHpMcrYimidU/';
-var LVMH_URL = 'https://docs.google.com/spreadsheets/d/1Nre4eDBN-dXOZylCLcaOEx_FtP9wg8KphO0UXDiipfo/';
-var LOREAL_URL = 'https://docs.google.com/spreadsheets/d/1VHRikdWYSinreyZlnm31c7AfOiFuGVLphheV2z_XNMo/';
-var LEGO_URL = 'https://docs.google.com/spreadsheets/d/1Bec3n97XfJFcLNGzySNW4ilnwVQzW1Md0mERZtReO9Q/';
+var COKE_URL = 'https://docs.google.com/spreadsheets/d/1HNBVG7IlKVLvKtSa7C7sfeohTgkO5DFE6aBfNfEQzY4/';
+var DIAGEO_URL = 'https://docs.google.com/spreadsheets/d/1XYtlSXnHIlECgGkmaUlC3EZsKGt3j46n-Sh5VJzoFnY/';
+var PROCTOR_URL = 'https://docs.google.com/spreadsheets/d/1o_H5MeJfsnxuxiSsdgIzDo5aPxRX2QnJ5APBeYRrQr8/';
+var HNK_URL = 'https://docs.google.com/spreadsheets/d/1UzHLyCRtPhat462C8BZolLi2zoJYJwxKID9LsR4F5B4/';
+var MICROSOFT_URL = 'https://docs.google.com/spreadsheets/d/1mhPy_EK89uevQ-oHEAvK88vBuNy_62_xQAO8wg9O9YU/';
+var MONDELEZ_URL = 'https://docs.google.com/spreadsheets/d/1YNqG9e1X73ufj2QMT2BnyoQA0zJdpOdua0LKxxOIx8k/';
+var BMW_URL = 'https://docs.google.com/spreadsheets/d/1vDYE8TqKG7z-jPuS9Eiu-RTQMJJyOPntw19g2mY4_K0/';
+var LVMH_URL = 'https://docs.google.com/spreadsheets/d/1_fgEVphua2nQLAScOkoQ2_48LGF2RU43u2VGHvFMEqE/';
+var LOREAL_URL = 'https://docs.google.com/spreadsheets/d/10wZ_K5mrMMtInrILFviQVsM1kUIyix6lk2QzLRm3ZhA/';
+var LEGO_URL = 'https://docs.google.com/spreadsheets/d/1nKd46O-nCYxIozF9u3LGvGBR7HsCKcwNYnMZF9hSwJA/'; 
+
 
 // LEAVE: Please do not edit these URLs
 var TOPICLIST_URL = 'https://docs.google.com/spreadsheets/d/1zLKscdaHQTtRINjUvbinTxMKs2LfthBl_jpBjfoLiZo/';
@@ -33,14 +34,14 @@ var log;
 function main() {
 
   // STEP ONE - SELECT YOUR CLIENT URL HERE: It is important you select your client here (eg. "COKE_URL, or DIAGEO_URL")
-  var URL = #input client url here#
+  var URL = #INPUT URL HERE#
  
   log = openSpreadSheet(LOG_URL);
   // STEP TWO - BY DEFAULT THIS SCRIPT ASSUMES YOU ARE RUNNING AT MCC LEVEL, IF IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
   //LEVEL = "Account"
   
 
-  if(LEVEL=="Account") { run(URL, AdsApp.currentAccount() ); }
+  if(LEVEL=="Account") { account = AdsApp.currentAccount(); run(URL, account ); appendRow(log, account.getCustomerId(), account.getCustomerId(), d.toString(), "ACCTCOMPLETED") }
   else {
     
     var accountIterator = AdsManagerApp.accounts().get();
@@ -69,13 +70,12 @@ function run(url, current) {
   // iterate through video + standard campaigns
   iterators = [AdsApp.videoCampaigns().get(), AdsApp.campaigns().get()];
 
-
+    c_id = rvlookup(log.getSheets()[0], 1, 4, current.getCustomerId());
+    
   for(t=0; t<iterators.length; t++) {
     iterator = iterators[t];
     while (iterator.hasNext()) {
     var campaign = iterator.next();
-    Logger.log("New: " + campaign.getName());
-    c_id = rvlookup(log.getSheets()[0], 1, 4, current.getCustomerId());
     
     if(String(c_id).length > 0) {
     if((+c_id)!==campaign.getId()) { continue; } else { c_id = ""; }}
