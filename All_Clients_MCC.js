@@ -33,7 +33,7 @@ var log;
 function main() {
 
   // STEP ONE - SELECT YOUR CLIENT URL HERE: It is important you select your client here (eg. "COKE_URL, or DIAGEO_URL")
-  var URL = #INPUT CLIENT URL HERE#
+  var URL = #input client url here#
  
   log = openSpreadSheet(LOG_URL);
   // STEP TWO - BY DEFAULT THIS SCRIPT ASSUMES YOU ARE RUNNING AT MCC LEVEL, IF IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
@@ -49,7 +49,7 @@ function main() {
       var account = accountIterator.next();
       
       a_id = rvlookup(log.getSheets()[0], 1, 4, account.getCustomerId());
-      if(a_id.length>0) {
+      if(String(a_id.length)>0) {
       if((a_id)==account.getCustomerId()) { continue; } else { a_id = ""; }}
       
       // Select the client account.
@@ -64,8 +64,6 @@ function run(url, current) {
   var ss = openSpreadSheet(url); 
   // set up spreadsheets
   d = new Date();
-  c_id = rvlookup(log.getSheets()[0], 1, 4, current.getCustomerId());
-  appendRow(log, current.getCustomerId(), current.getName(), d.toString(), "ATTEMPTED");
   
   
   // iterate through video + standard campaigns
@@ -77,8 +75,11 @@ function run(url, current) {
     while (iterator.hasNext()) {
     var campaign = iterator.next();
     Logger.log("New: " + campaign.getName());
-    if(c_id.length > 0) {
-    if((+c_id)!==campaign.getId()) { continue; } else { c_id = ""; }}
+    c_id = rvlookup(log.getSheets()[0], 1, 4, current.getCustomerId());
+    
+    if(String(c_id).length > 0) {
+      Logger.log(c_id + " vs " + campaign.getId());
+    if((+c_id)!==campaign.getId()) { Logger.log("Skipping"); continue; } else { c_id = ""; }}
     
     if(hasActiveAds(campaign)) {
       appendRow(log, current.getCustomerId(), current.getName(), d.toString(), "CAMPAIGNSTART", campaign.getId());
