@@ -75,8 +75,7 @@ var lineupsSettings_cache;
 function main() {
   // STEP ONE - SELECT YOUR CLIENT URL HERE: It is important you select your
   // client here (eg. "COKE_URL, or DIAGEO_URL")
-  var URL = #INPUT URL HERE#
-
+  var URL = #CLIENT URL#
   //log = openSpreadSheet(LOG_URL);
   //log_ss = log.getSheets()[0];
   //log_data = log_ss.getRange(1,1,log_ss.getLastRow(), log_ss.getLastColumn()).getValues();
@@ -185,6 +184,7 @@ function run(url, current, ss) {
         excl_array =
             findExcludedContentLabelByNameArray(contentLabelsArr, campaign, contentTypeList_data);
         excl_array = excl_array.concat(findExcludedContentLabelByNameArray(contentTypesArr, campaign, contentTypeList_data));
+      
         addExcludedContentLabelsToCampaign(
             campaign,
             excl_array);  // if we do at camp level, consider ad group level
@@ -233,12 +233,15 @@ function findExcludedContentLabelByNameArray(arr, campaign, data) {
     offset = 2;
   }
   
-  
+
   for (k = 0; k < arr.length; k++) {
     val = vlookup_data(data, 1 + offset, 1, arr[k][0]);
     if (val !== null && typeof val !== 'undefined') {
       retVal.push(val);
     }  // wtf is the === negation?
+    else if(!val) {
+    Logger.log("Stepping over " + arr[k][0] + " as false in validator.")
+    }
     else {
       Logger.log(
           'Error: The topic ' + arr[k][0] +
@@ -272,7 +275,20 @@ function addExcludedTopicsToCampaign(campaign, excl_array) {
 }
 
 function addExcludedContentLabelsToCampaign(campaign, excl_array) {
-    
+  var campaignType = campaign.getEntityType();
+  if (campaignType == 'Campaign') {
+    targeting = campaign.display();
+  } else if (campaignType == 'VideoCampaign') {
+    targeting = campaign.videoTargeting();
+  }
+  excl = targeting.excludedContentLabels().get();
+  while(excl.hasNext()) {
+    lbl = excl.next();
+    if(lbl.getContentLabelType() !="VIDEO_RATING_Y" && lbl.getContentLabelType() != "VIDEO_RATING_DV_MA") {
+      lbl.remove();
+    }
+  }
+
   for (i = 0; i < excl_array.length; i++) {
     try {
       var topicBuilder = campaign.excludeContentLabel(excl_array[i]);
