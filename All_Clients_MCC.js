@@ -75,7 +75,7 @@ var lineupsSettings_cache;
 function main() {
   // STEP ONE - SELECT YOUR CLIENT URL HERE: It is important you select your
   // client here (eg. "COKE_URL, or DIAGEO_URL")
-  var URL = #CLIENT URL#
+  var URL = #INPUT URL HERE#
   //log = openSpreadSheet(LOG_URL);
   //log_ss = log.getSheets()[0];
   //log_data = log_ss.getRange(1,1,log_ss.getLastRow(), log_ss.getLastColumn()).getValues();
@@ -97,7 +97,7 @@ function main() {
   
   // STEP TWO - BY DEFAULT THIS SCRIPT ASSUMES YOU ARE RUNNING AT MCC LEVEL, IF
   // IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
-  //  LEVEL = "Account"
+  //   LEVEL = "Account"
 
 
   if (LEVEL == 'Account') {
@@ -277,7 +277,7 @@ function addExcludedTopicsToCampaign(campaign, excl_array) {
 function addExcludedContentLabelsToCampaign(campaign, excl_array) {
   var campaignType = campaign.getEntityType();
   if (campaignType == 'Campaign') {
-    targeting = campaign.display();
+    targeting = campaign.targeting();
   } else if (campaignType == 'VideoCampaign') {
     targeting = campaign.videoTargeting();
   }
