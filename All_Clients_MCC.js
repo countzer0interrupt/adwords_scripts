@@ -97,7 +97,7 @@ function main() {
   
   // STEP TWO - BY DEFAULT THIS SCRIPT ASSUMES YOU ARE RUNNING AT MCC LEVEL, IF
   // IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
-  //LEVEL = "Account"
+  //  LEVEL = "Account"
 
 
   if (LEVEL == 'Account') {
