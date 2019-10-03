@@ -279,7 +279,7 @@ function addExcludedContentLabelsToCampaign(campaign, excl_array) {
   if (campaignType == 'Campaign') {
     targeting = campaign.targeting();
   } else if (campaignType == 'VideoCampaign') {
-    targeting = campaign.videoTargeting();
+    targeting = campaign.targeting();
   }
   excl = targeting.excludedContentLabels().get();
   while(excl.hasNext()) {
