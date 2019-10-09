@@ -76,7 +76,7 @@ var lineupsSettings_cache;
 function main() {
   // STEP ONE - SELECT YOUR CLIENT URL HERE: It is important you select your
   // client here (eg. "COKE_URL, or DIAGEO_URL")
-  var URL = #INPUT CLIENT URL#
+  var URL = BMW_URL
   //log = openSpreadSheet(LOG_URL);
   //log_ss = log.getSheets()[0];
   //log_data = log_ss.getRange(1,1,log_ss.getLastRow(), log_ss.getLastColumn()).getValues();
@@ -101,7 +101,9 @@ function main() {
   // IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
   LEVEL = "Account"
 
-
+  // PLEASE ENSURE THAT CAMPAIGN IDs are given in array format per below, ie [1234, 1224];
+  // The campaigns should be in numeric form stripped of any hyphens, and enclosed within the brackets per above
+  CAMPAIGN_IDs = [6511342283] 
 
   if (LEVEL == 'Account') {
     account = AdsApp.currentAccount();
@@ -141,7 +143,7 @@ function run(url, current, ss) {
 
 
   // iterate through video + standard campaigns
-  iterators = [AdsApp.videoCampaigns().withCondition("Status = 'ENABLED'").get(), AdsApp.campaigns().withCondition("Status = 'ENABLED'").withCondition("AdvertisingChannelType!='SEARCH'").get()];
+  iterators = [AdsApp.videoCampaigns().withIds(CAMPAIGN_IDs).get(), AdsApp.campaigns().withIds(CAMPAIGN_IDs).get()];
 
   //c_id = rvlookup(log.getSheets()[0], 1, 4, current.getCustomerId());
 

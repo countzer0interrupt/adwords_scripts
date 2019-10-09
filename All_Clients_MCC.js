@@ -1,3 +1,4 @@
+
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -75,7 +76,7 @@ var lineupsSettings_cache;
 function main() {
   // STEP ONE - SELECT YOUR CLIENT URL HERE: It is important you select your
   // client here (eg. "COKE_URL, or DIAGEO_URL")
-  var URL = #INPUT URL HERE#
+  var URL = #INPUT CLIENT URL#
   //log = openSpreadSheet(LOG_URL);
   //log_ss = log.getSheets()[0];
   //log_data = log_ss.getRange(1,1,log_ss.getLastRow(), log_ss.getLastColumn()).getValues();
@@ -93,11 +94,13 @@ function main() {
   contentTypeSettings_cache = a;
   contentTopicSettings_cache = cacheOptions(settings_ss, "Topic Exclusions");
   contentLabelSettings_cache = cacheOptions(settings_ss, "Content Labels");
-  
+  miscSettings_cache = cacheOptions(settings_ss, "Misc");
+
   
   // STEP TWO - BY DEFAULT THIS SCRIPT ASSUMES YOU ARE RUNNING AT MCC LEVEL, IF
   // IT IS AT ACOCUNT LEVEL, PLEASE UNCOMMENT THE LINK BELOW
-  //   LEVEL = "Account"
+  //LEVEL = "Account"
+
 
 
   if (LEVEL == 'Account') {
@@ -146,7 +149,7 @@ function run(url, current, ss) {
     iterator = iterators[t];
     while (iterator.hasNext()) {
       var campaign = iterator.next();
-
+      Logger.log("Running script in account: " + campaign.getId());
     //  if (String(c_id).length > 0) {
     //    if ((+c_id) !== campaign.getId()) {
     //      continue;
@@ -173,7 +176,7 @@ function run(url, current, ss) {
         var contentTypesArr = findContentTypes();
         var contentLabelsArr = findContentLabels();
  
-        //var miscArr = findMisc(settings_ss);
+        var miscArr = findMisc();
         excl_array = findTopicByNameArray(
             excludedTopicsArr, contentTopicList_data);  // need to find a way to get exclusions
             
@@ -190,10 +193,23 @@ function run(url, current, ss) {
             excl_array);  // if we do at camp level, consider ad group level
 
         
-        
-        checkKeywordExclusions(campaign);
-        checkVideoChannelExclusions(campaign);
-        checkSiteExclusions(campaign);
+        // these should not work
+       
+        for(p=0; p<miscArr.length; p++) {
+         if(miscArr[p][0]=="Site Exclusions" && miscArr[p][1]) { 
+          checkSiteExclusions(campaign);
+         }
+         if(miscArr[p][0]=="Keyword Exclusions" && miscArr[p][1]) {
+          checkKeywordExclusions(campaign);
+         }
+         if (miscArr[p][0]=="Video/Channel Exclusions" && miscArr[p][1]) {
+          checkVideoChannelExclusions(campaign);
+         }
+        };
+
+
+
+   
 
     //  appendRow(
     //      log_ss, current.getCustomerId(), current.getName(), d.toString(),
@@ -302,20 +318,21 @@ function addExcludedContentLabelsToCampaign(campaign, excl_array) {
 
 function checkKeywordExclusions(campaign) {
   var campaignType = campaign.getEntityType();
-  return;  // below commented out for time being, until further direction from
-           // TT/TG
+  Logger.log("keywords")
   if (campaignType == 'Campaign') {
+      Logger.log(campaign.negativeKeywords().get().totalNumEntities())
     targeting = campaign.display();
-    if (campaign.negativeKeywordLists().get().totalNumEntities() <= 0 ||
+    if (
         campaign.negativeKeywords().get().totalNumEntities() <= 0) {
+      Logger.log("c")
       // add a random keyword - CONFIRM WITH TAMMY AND TAZIO THAT THIS IS OK
       campaign.createNegativeKeyword('porn');
     }
   } else if (campaignType == 'VideoCampaign') {
+      Logger.log("vid")
     targeting = campaign.videoTargeting();
     videoKeywordBuilder = targeting.newKeywordBuilder();
-    if (targeting.keywords().get().totalNumEntities() <= 0 ||
-        campaign.negativeKeywordsLists().get().totalNumEntities() <= 0) {
+    if (targeting.keywords().get().totalNumEntities() <= 0) {
       var videoKeywordOperation = videoKeywordBuilder
                                       .withText('porn')  // required
                                       .exclude();        // create the keyword
@@ -326,8 +343,7 @@ function checkKeywordExclusions(campaign) {
 function checkVideoChannelExclusions(campaign) {
   // check with tammy and tazio
   var campaignType = campaign.getEntityType();
-  return;  // below commented out for time being, until further direction from
-           // TT/TG
+  
   if (campaignType == 'Campaign') {
     targeting = campaign.display();
   } else if (campaignType == 'VideoCampaign') {
@@ -345,9 +361,7 @@ function checkVideoChannelExclusions(campaign) {
 
 
 function checkSiteExclusions(campaign) {
-  // check with tazio and tammy
-  return;  // below commented out for time being, until further direction from
-           // TT/TG
+  
   var campaignType = campaign.getEntityType();
   if (campaignType == 'Campaign') {
     targeting = campaign.display();
@@ -405,8 +419,8 @@ function findContentTypes(index) {
 function findContentLabels(index) {
   return findOptions(contentLabelSettings_cache, location, index);
 }
-function findMisc(ss, index) {
-  return findOptions(ss, 'Misc', index);
+function findMisc(index) {
+  return findOptions(miscSettings_cache, location, index);
 }
 function findLineups(ss, index) {
   return findOptions(ss, 'Lineups', index);
