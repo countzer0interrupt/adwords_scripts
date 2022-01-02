@@ -26,35 +26,13 @@
 // ----------------------------------------------------------------------------------------------------------------------------------------------
 
 // CLIENT URLs: Please do not edit these
-var COKE_URL =
-    'https://docs.google.com/spreadsheets/d/1HNBVG7IlKVLvKtSa7C7sfeohTgkO5DFE6aBfNfEQzY4/';
-var DIAGEO_URL =
-    'https://docs.google.com/spreadsheets/d/1XYtlSXnHIlECgGkmaUlC3EZsKGt3j46n-Sh5VJzoFnY/';
-var PROCTOR_URL =
-    'https://docs.google.com/spreadsheets/d/1o_H5MeJfsnxuxiSsdgIzDo5aPxRX2QnJ5APBeYRrQr8/';
-var HNK_URL =
-    'https://docs.google.com/spreadsheets/d/1UzHLyCRtPhat462C8BZolLi2zoJYJwxKID9LsR4F5B4/';
-var MICROSOFT_URL =
-    'https://docs.google.com/spreadsheets/d/1mhPy_EK89uevQ-oHEAvK88vBuNy_62_xQAO8wg9O9YU/';
-var MONDELEZ_URL =
-    'https://docs.google.com/spreadsheets/d/1YNqG9e1X73ufj2QMT2BnyoQA0zJdpOdua0LKxxOIx8k/';
-var BMW_URL =
-    'https://docs.google.com/spreadsheets/d/1vDYE8TqKG7z-jPuS9Eiu-RTQMJJyOPntw19g2mY4_K0/';
-var LVMH_URL =
-    'https://docs.google.com/spreadsheets/d/1_fgEVphua2nQLAScOkoQ2_48LGF2RU43u2VGHvFMEqE/';
-var LOREAL_URL =
-    'https://docs.google.com/spreadsheets/d/10wZ_K5mrMMtInrILFviQVsM1kUIyix6lk2QzLRm3ZhA/';
-var LEGO_URL =
-    'https://docs.google.com/spreadsheets/d/1nKd46O-nCYxIozF9u3LGvGBR7HsCKcwNYnMZF9hSwJA/';
+// redacted
 
 
 // LEAVE: Please do not edit these URLs
-var TOPICLIST_URL =
-    'https://docs.google.com/spreadsheets/d/1zLKscdaHQTtRINjUvbinTxMKs2LfthBl_jpBjfoLiZo/';
-var CONTENTTYPE_URL =
-    'https://docs.google.com/spreadsheets/d/1ap27whVCfA638S858XqXqfHD2rKvK93LEf4F-z6sn58/';
-var LOG_URL =
-    'https://docs.google.com/spreadsheets/d/1x7D-WjdSd4klm_eJzs4Y7eX_npK51A6n5ZUqJ8VGHUc/';
+var TOPICLIST_URL = '';
+var CONTENTTYPE_URL = '';
+var LOG_URL = '';
 
 // other constants, do not edit this
 var LEVEL = 'MCC';
